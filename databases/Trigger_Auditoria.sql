@@ -1,26 +1,35 @@
+-- ============================================================
+-- TRIGGER: trg_AuditarEmpleado
+-- Descripción: Registra en la tabla Auditoria cualquier operación
+--              (INSERT, UPDATE, DELETE) realizada sobre EMPLEADOS.
+-- ============================================================
 USE CarWashDB;
 GO
 
-CREATE TRIGGER trg_AuditarEmpleado
+CREATE OR ALTER TRIGGER trg_AuditarEmpleado
 ON EMPLEADOS
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
     SET NOCOUNT ON;
-    DECLARE @Operacion VARCHAR(10);
-    IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted)
-        SET @Operacion = 'UPDATE';
-    ELSE IF EXISTS (SELECT * FROM inserted)
-        SET @Operacion = 'INSERT';
-    ELSE
-        SET @Operacion = 'DELETE';
 
+    -- Determinar el tipo de operación
+    DECLARE @Operacion VARCHAR(10) = 
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM inserted) AND EXISTS (SELECT 1 FROM deleted) THEN 'UPDATE'
+            WHEN EXISTS (SELECT 1 FROM inserted) THEN 'INSERT'
+            ELSE 'DELETE'
+        END;
+
+    -- Insertar el registro de auditoría
     INSERT INTO Auditoria (TablaAfectada, Operacion, IdRegistro, DatosAnteriores, DatosNuevos, Usuario)
-    SELECT 'EMPLEADOS', @Operacion,
-           ISNULL(i.IdEmpleado, d.IdEmpleado),
-           (SELECT * FROM deleted d2 WHERE d2.IdEmpleado = d.IdEmpleado FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
-           (SELECT * FROM inserted i2 WHERE i2.IdEmpleado = i.IdEmpleado FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
-           SYSTEM_USER
+    SELECT 
+        'EMPLEADOS'                     AS TablaAfectada,
+        @Operacion                      AS Operacion,
+        ISNULL(i.IdEmpleado, d.IdEmpleado) AS IdRegistro,
+        (SELECT d2.* FROM deleted d2 WHERE d2.IdEmpleado = d.IdEmpleado FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS DatosAnteriores,
+        (SELECT i2.* FROM inserted i2 WHERE i2.IdEmpleado = i.IdEmpleado FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS DatosNuevos,
+        SYSTEM_USER                     AS Usuario
     FROM inserted i
     FULL OUTER JOIN deleted d ON i.IdEmpleado = d.IdEmpleado;
 END

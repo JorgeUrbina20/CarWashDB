@@ -22,15 +22,18 @@ INSERT INTO EMPLEADOS (Nombre, Apellido_Paterno, Apellido_Materno, Direccion, Te
 ('Carmen', 'López', 'Ruiz', 'Calle 23 #33', '555-2004', 15000, 'Nocturno', 'Lavador');
 
 -- ============================================================
--- 3. USUARIOS (contraseñas temporales; el backend usará bcrypt)
+-- 3. USUARIOS (contraseñas temporales, el backend aplicará bcrypt)
 -- ============================================================
+-- IMPORTANTE: La contraseña 'Admin123!' será reemplazada por el backend con bcrypt.
+-- Se usa el hash de ejemplo SOLO para que el login funcione con 'Admin123!'.
+-- Los demás usuarios usarán 'temporal' y deberán cambiarse en el primer inicio.
 INSERT INTO USUARIOS (NombreUsuario, Contrasena, IdRol, IdEmpleado) VALUES
-('admin', 'temporal', 1, 1),       -- Owner
-('laura.r', 'temporal', 2, 2),     -- Recepcionista matutina
-('jose.m', 'temporal', 2, 3),      -- Recepcionista vespertino
-('miguel.g', 'temporal', 3, 4),    -- Lavador
-('ana.s', 'temporal', 3, 5),       -- Lavador
-('luis.f', 'temporal', 3, 6);      -- Lavador (Carmen no tiene usuario para simplificar)
+('admin', '$2a$12$LJ3m4yG5Z6v6Qe9F8v0wFeK1bG3c0hJpXnR0oT7uWsUfYzBvI8m2W', 1, 1), -- hash de 'Admin123!'
+('laura.r', 'temporal', 2, 2),
+('jose.m', 'temporal', 2, 3),
+('miguel.g', 'temporal', 3, 4),
+('ana.s', 'temporal', 3, 5),
+('luis.f', 'temporal', 3, 6);
 
 -- ============================================================
 -- 4. SUCURSALES (CARWASH)
@@ -42,12 +45,11 @@ INSERT INTO CARWASH (Nombre, Direccion, Email, Telefono) VALUES
 -- ============================================================
 -- 5. ASIGNACIÓN EMPLEADOS → SUCURSALES
 -- ============================================================
--- Owner en ambas
-INSERT INTO CARWASH_HAS_EMPLEADOS (IdCarwash, IdEmpleado) VALUES (1,1), (2,1);
--- Recepcionistas: Laura en Central, José en Norte
-INSERT INTO CARWASH_HAS_EMPLEADOS VALUES (1,2), (2,3);
--- Lavadores: Miguel y Ana en Central, Luis en Norte, Carmen en Norte
-INSERT INTO CARWASH_HAS_EMPLEADOS VALUES (1,4), (1,5), (2,6), (2,7);
+INSERT INTO CARWASH_HAS_EMPLEADOS (IdCarwash, IdEmpleado) VALUES
+(1,1), (2,1),   -- Owner en ambas
+(1,2), (2,3),   -- Recepcionistas: Laura en Central, José en Norte
+(1,4), (1,5),   -- Lavadores: Miguel y Ana en Central
+(2,6), (2,7);   -- Lavadores: Luis y Carmen en Norte
 
 -- ============================================================
 -- 6. CLIENTES
@@ -79,15 +81,15 @@ INSERT INTO MODELOS (NombreModelo, IdMarca) VALUES
 ('Rio', 8), ('Sportage', 8), ('Sorento', 8);
 
 -- ============================================================
--- 9. VEHÍCULOS DE CLIENTES (usando IdModelo)
+-- 9. VEHÍCULOS DE CLIENTES
 -- ============================================================
 INSERT INTO VEHICULOS (IdCliente, IdModelo, Tipo, Placa) VALUES
-(1, 1, 'Sedán', 'ABC-123'),    -- Juan -> Toyota Corolla
-(1, 4, 'Sedán', 'ABC-124'),    -- Juan también tiene un Honda Civic
-(2, 10, 'Camioneta', 'DEF-456'), -- María -> Ford F-150
-(3, 2, 'Sedán', 'GHI-789'),   -- Carlos -> Toyota Camry
-(4, 16, 'Sedán', 'JKL-012'),  -- Sofía -> Hyundai Elantra
-(5, 19, 'Sedán', 'MNO-345');  -- Pedro -> Mazda3
+(1, 1, 'Sedán', 'ABC-123'),     -- Juan -> Toyota Corolla
+(1, 4, 'Sedán', 'ABC-124'),     -- Juan -> Honda Civic
+(2, 10, 'Camioneta', 'DEF-456'),-- María -> Ford F-150
+(3, 2, 'Sedán', 'GHI-789'),     -- Carlos -> Toyota Camry
+(4, 16, 'Sedán', 'JKL-012'),    -- Sofía -> Hyundai Elantra
+(5, 19, 'Sedán', 'MNO-345');    -- Pedro -> Mazda3
 
 -- ============================================================
 -- 10. TIPOS DE SERVICIO
@@ -99,14 +101,7 @@ INSERT INTO TIPOS_SERVICIO (Nombre, Descripcion, PrecioBase) VALUES
 ('Lavado Rápido', 'Solo enjuague y secado exterior', 100.00);
 
 -- ============================================================
--- 11. SERVICIO DELIVERY (datos de ejemplo, si se usa a domicilio)
--- ============================================================
-INSERT INTO SERVICIO_DELIVERY (Direccion, Precio, Fecha, Tipo_Pago) VALUES
-('Calle 1 #100', 180.00, '2026-05-04', 'Efectivo'),   -- Para Juan
-('Carrera 2 #200', 250.00, '2026-05-04', 'Tarjeta');  -- Para María
-
--- ============================================================
--- 12. ÓRDENES DE TRABAJO (flujo real)
+-- 11. ÓRDENES DE TRABAJO (flujo real)
 -- ============================================================
 INSERT INTO ORDENES (IdCliente, IdVehiculo, IdTipoServicio, IdEmpleado, Estado, InstruccionesEspeciales) VALUES
 (1, 1, 1, 4, 'pendiente', 'Quitar manchas del capó'),           -- Corolla de Juan, Lavado Exterior, asignado a Miguel
@@ -116,33 +111,52 @@ INSERT INTO ORDENES (IdCliente, IdVehiculo, IdTipoServicio, IdEmpleado, Estado, 
 (5, 6, 2, 7, 'pendiente', 'Interior con aroma a vainilla');     -- Mazda3 de Pedro, asignado a Carmen (Norte)
 
 -- ============================================================
--- 13. SERVICIOS (facturación) y PAGOS (caja)
+-- 12. SERVICIOS (facturación) y PAGOS (caja) con transacción
 -- ============================================================
--- Simulamos que la orden 1 ya se completó y se pagó.
--- Primero registramos el servicio y luego el pago.
+DECLARE @IdServicio INT;
 
--- Servicio 1: Corolla de Juan, Lavado Exterior, costo final 150
-INSERT INTO SERVICIOS (IdCliente, IdVehiculo, IdTipoServicio, Costo, Fecha) VALUES
-(1, 1, 1, 150.00, '2026-05-04');
+-- Orden 1 completada y pagada
+BEGIN TRY
+    BEGIN TRANSACTION;
+    
+    INSERT INTO SERVICIOS (IdCliente, IdVehiculo, IdTipoServicio, Costo, Fecha) VALUES
+    (1, 1, 1, 150.00, '2026-05-04');
+    SET @IdServicio = SCOPE_IDENTITY();
 
-DECLARE @IdServicio INT = SCOPE_IDENTITY();
+    INSERT INTO CAJA (IdServicio, Precio, Tipo_Pago, Fecha) VALUES
+    (@IdServicio, 150.00, 'Efectivo', '2026-05-04');
 
-INSERT INTO CAJA (IdServicio, Precio, Tipo_Pago, Fecha) VALUES
-(@IdServicio, 150.00, 'Efectivo', '2026-05-04');
+    UPDATE ORDENES SET IdServicio = @IdServicio, Estado = 'terminado' WHERE IdOrden = 1;
+    
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    ROLLBACK TRANSACTION;
+    THROW;
+END CATCH
 
--- Asociamos ese servicio a la orden 1 (opcional, depende si se vincula orden con servicio)
-UPDATE ORDENES SET IdServicio = @IdServicio, Estado = 'terminado' WHERE IdOrden = 1;
+-- Orden 2 completada y pagada
+BEGIN TRY
+    BEGIN TRANSACTION;
+    
+    INSERT INTO SERVICIOS (IdCliente, IdVehiculo, IdTipoServicio, Costo, Fecha) VALUES
+    (2, 3, 2, 200.00, '2026-05-04');
+    SET @IdServicio = SCOPE_IDENTITY();
 
--- Orden 2 terminada y pagada
-INSERT INTO SERVICIOS (IdCliente, IdVehiculo, IdTipoServicio, Costo, Fecha) VALUES
-(2, 3, 2, 200.00, '2026-05-04');
-SET @IdServicio = SCOPE_IDENTITY();
-INSERT INTO CAJA (IdServicio, Precio, Tipo_Pago, Fecha) VALUES
-(@IdServicio, 200.00, 'Tarjeta', '2026-05-04');
-UPDATE ORDENES SET IdServicio = @IdServicio, Estado = 'terminado', IdEmpleado = 5 WHERE IdOrden = 2;
+    INSERT INTO CAJA (IdServicio, Precio, Tipo_Pago, Fecha) VALUES
+    (@IdServicio, 200.00, 'Tarjeta', '2026-05-04');
+
+    UPDATE ORDENES SET IdServicio = @IdServicio, Estado = 'terminado', IdEmpleado = 5 WHERE IdOrden = 2;
+    
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    ROLLBACK TRANSACTION;
+    THROW;
+END CATCH
 
 -- ============================================================
--- 14. ALMACEN (productos)
+-- 13. ALMACEN (productos)
 -- ============================================================
 INSERT INTO ALMACEN (Nombre, Descripcion, Precio) VALUES
 ('Shampoo para autos 5L', 'Líquido concentrado', 150.00),
@@ -154,7 +168,7 @@ INSERT INTO ALMACEN (Nombre, Descripcion, Precio) VALUES
 ('Esponja profesional', 'Esponja de doble cara', 35.00);
 
 -- ============================================================
--- 15. INVENTARIO
+-- 14. INVENTARIO
 -- ============================================================
 INSERT INTO INVENTARIO (IdProducto, Cantidad, CostoUnitario) VALUES
 (1, 20, 100.00),
@@ -166,7 +180,7 @@ INSERT INTO INVENTARIO (IdProducto, Cantidad, CostoUnitario) VALUES
 (7, 60, 20.00);
 
 -- ============================================================
--- 16. PROVEEDORES
+-- 15. PROVEEDORES
 -- ============================================================
 INSERT INTO PROVEEDORES (Nombre, Direccion, Telefono, Email) VALUES
 ('Distribuidora LimpioMax', 'Calle Industria 1', '555-5001', 'ventas@limpiomax.com'),
@@ -174,15 +188,10 @@ INSERT INTO PROVEEDORES (Nombre, Direccion, Telefono, Email) VALUES
 ('Insumos y Más', 'Boulevard Comercio 300', '555-5003', 'contacto@insumosymas.com');
 
 -- ============================================================
--- 17. PROVEEDORES_HAS_INVENTARIO
+-- 16. PROVEEDORES_HAS_INVENTARIO
 -- ============================================================
 INSERT INTO PROVEEDORES_HAS_INVENTARIO (IdProveedor, IdInventario) VALUES
 (1,1), (1,2), (1,3),
 (2,4), (2,5), (2,6),
 (3,7), (3,2), (3,5);
-
--- ============================================================
--- 18. AUDITORÍA (datos de ejemplo inicial no necesarios)
--- Se llenará automáticamente con los triggers.
--- ============================================================
 GO

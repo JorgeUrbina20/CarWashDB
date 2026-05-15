@@ -1,14 +1,12 @@
 -- ============================================================
--- BASE DE DATOS: CarWashDB
+-- BASE DE DATOS: CarWashDB 
 -- ============================================================
 CREATE DATABASE CarWashDB;
 GO
 USE CarWashDB;
 GO
 
--- ============================================================
 -- 1. ROLES
--- ============================================================
 CREATE TABLE ROLES (
     IdRol INT PRIMARY KEY IDENTITY(1,1),
     NombreRol VARCHAR(50) NOT NULL UNIQUE,
@@ -16,9 +14,7 @@ CREATE TABLE ROLES (
     Estado BIT DEFAULT 1
 );
 
--- ============================================================
 -- 2. EMPLEADOS
--- ============================================================
 CREATE TABLE EMPLEADOS (
     IdEmpleado INT PRIMARY KEY IDENTITY(1,1),
     Nombre VARCHAR(50) NOT NULL,
@@ -28,18 +24,16 @@ CREATE TABLE EMPLEADOS (
     Telefono VARCHAR(15),
     Sueldo DECIMAL(10,2),
     Turno VARCHAR(20),
-    Cargo VARCHAR(50) NOT NULL,          -- 'Owner', 'Recepcionista', 'Lavador', etc.
+    Cargo VARCHAR(50) NOT NULL,
     FechaIngreso DATE DEFAULT GETDATE(),
     Activo BIT DEFAULT 1
 );
 
--- ============================================================
 -- 3. USUARIOS
--- ============================================================
 CREATE TABLE USUARIOS (
     IdUsuario INT PRIMARY KEY IDENTITY(1,1),
     NombreUsuario VARCHAR(50) NOT NULL UNIQUE,
-    Contrasena VARCHAR(255) NOT NULL,    -- hash bcrypt
+    Contrasena VARCHAR(255) NOT NULL,
     IdRol INT NOT NULL,
     IdEmpleado INT NULL UNIQUE,
     FechaCreacion DATETIME DEFAULT GETDATE(),
@@ -48,9 +42,7 @@ CREATE TABLE USUARIOS (
     FOREIGN KEY (IdEmpleado) REFERENCES EMPLEADOS(IdEmpleado)
 );
 
--- ============================================================
 -- 4. CARWASH (SUCURSAL)
--- ============================================================
 CREATE TABLE CARWASH (
     IdCarwash INT PRIMARY KEY IDENTITY(1,1),
     Nombre VARCHAR(50) NOT NULL,
@@ -60,9 +52,7 @@ CREATE TABLE CARWASH (
     Activo BIT DEFAULT 1
 );
 
--- ============================================================
--- 5. CARWASH_HAS_EMPLEADOS (muchos a muchos)
--- ============================================================
+-- 5. CARWASH_HAS_EMPLEADOS
 CREATE TABLE CARWASH_HAS_EMPLEADOS (
     IdCarwash INT NOT NULL,
     IdEmpleado INT NOT NULL,
@@ -71,9 +61,7 @@ CREATE TABLE CARWASH_HAS_EMPLEADOS (
     FOREIGN KEY (IdEmpleado) REFERENCES EMPLEADOS(IdEmpleado)
 );
 
--- ============================================================
 -- 6. CLIENTES
--- ============================================================
 CREATE TABLE CLIENTES (
     IdCliente INT PRIMARY KEY IDENTITY(1,1),
     Nombre VARCHAR(50) NOT NULL,
@@ -85,17 +73,13 @@ CREATE TABLE CLIENTES (
     Activo BIT DEFAULT 1
 );
 
--- ============================================================
--- 7. MARCAS DE VEHÍCULOS
--- ============================================================
+-- 7. MARCAS
 CREATE TABLE MARCAS (
     IdMarca INT PRIMARY KEY IDENTITY(1,1),
     NombreMarca VARCHAR(50) NOT NULL UNIQUE
 );
 
--- ============================================================
--- 8. MODELOS DE VEHÍCULOS
--- ============================================================
+-- 8. MODELOS
 CREATE TABLE MODELOS (
     IdModelo INT PRIMARY KEY IDENTITY(1,1),
     NombreModelo VARCHAR(50) NOT NULL,
@@ -103,22 +87,18 @@ CREATE TABLE MODELOS (
     FOREIGN KEY (IdMarca) REFERENCES MARCAS(IdMarca)
 );
 
--- ============================================================
 -- 9. VEHÍCULOS
--- ============================================================
 CREATE TABLE VEHICULOS (
     IdVehiculo INT PRIMARY KEY IDENTITY(1,1),
     IdCliente INT NOT NULL,
     IdModelo INT NOT NULL,
-    Tipo VARCHAR(30),                     -- Sedán, SUV, etc.
+    Tipo VARCHAR(30),
     Placa VARCHAR(20) UNIQUE NOT NULL,
     FOREIGN KEY (IdCliente) REFERENCES CLIENTES(IdCliente),
     FOREIGN KEY (IdModelo) REFERENCES MODELOS(IdModelo)
 );
 
--- ============================================================
--- 10. TIPOS DE SERVICIO (CATÁLOGO)
--- ============================================================
+-- 10. TIPOS DE SERVICIO
 CREATE TABLE TIPOS_SERVICIO (
     IdTipoServicio INT PRIMARY KEY IDENTITY(1,1),
     Nombre VARCHAR(50) NOT NULL,
@@ -126,37 +106,20 @@ CREATE TABLE TIPOS_SERVICIO (
     PrecioBase DECIMAL(10,2) NOT NULL
 );
 
--- ============================================================
--- 11. SERVICIO DELIVERY
--- ============================================================
-CREATE TABLE SERVICIO_DELIVERY (
-    IdServicioDelivery INT PRIMARY KEY IDENTITY(1,1),
-    Direccion VARCHAR(100) NOT NULL,
-    Precio DECIMAL(10,2),
-    Fecha DATE,
-    Tipo_Pago VARCHAR(50)
-);
-
--- ============================================================
--- 12. SERVICIOS (TRANSACCIONES)
--- ============================================================
+-- 11. SERVICIOS (sin delivery)
 CREATE TABLE SERVICIOS (
     IdServicio INT PRIMARY KEY IDENTITY(1,1),
     IdCliente INT NOT NULL,
     IdVehiculo INT NULL,
     IdTipoServicio INT NOT NULL,
-    Costo DECIMAL(10,2) NOT NULL,          -- precio final aplicado
-    IdServicioDelivery INT NULL,
+    Costo DECIMAL(10,2) NOT NULL,
     Fecha DATE DEFAULT GETDATE(),
     FOREIGN KEY (IdCliente) REFERENCES CLIENTES(IdCliente),
     FOREIGN KEY (IdVehiculo) REFERENCES VEHICULOS(IdVehiculo),
-    FOREIGN KEY (IdTipoServicio) REFERENCES TIPOS_SERVICIO(IdTipoServicio),
-    FOREIGN KEY (IdServicioDelivery) REFERENCES SERVICIO_DELIVERY(IdServicioDelivery)
+    FOREIGN KEY (IdTipoServicio) REFERENCES TIPOS_SERVICIO(IdTipoServicio)
 );
 
--- ============================================================
--- 13. CAJA (PAGOS)
--- ============================================================
+-- 12. CAJA (PAGOS)
 CREATE TABLE CAJA (
     IdCaja INT PRIMARY KEY IDENTITY(1,1),
     IdServicio INT NOT NULL,
@@ -166,48 +129,42 @@ CREATE TABLE CAJA (
     FOREIGN KEY (IdServicio) REFERENCES SERVICIOS(IdServicio)
 );
 
--- ============================================================
--- 14. ÓRDENES DE TRABAJO
--- ============================================================
+-- 13. ÓRDENES DE TRABAJO
 CREATE TABLE ORDENES (
     IdOrden INT PRIMARY KEY IDENTITY(1,1),
     IdCliente INT NOT NULL,
     IdVehiculo INT NOT NULL,
     IdTipoServicio INT NOT NULL,
-    IdEmpleado INT NULL,                   -- lavador asignado
-    Estado VARCHAR(20) DEFAULT 'pendiente',-- pendiente, lavando, terminado, entregado
+    IdEmpleado INT NULL,
+    IdServicio INT NULL,                 -- se asigna cuando se factura
+    Estado VARCHAR(20) DEFAULT 'pendiente',
     FechaCreacion DATETIME DEFAULT GETDATE(),
     InstruccionesEspeciales VARCHAR(200),
     FOREIGN KEY (IdCliente) REFERENCES CLIENTES(IdCliente),
     FOREIGN KEY (IdVehiculo) REFERENCES VEHICULOS(IdVehiculo),
     FOREIGN KEY (IdTipoServicio) REFERENCES TIPOS_SERVICIO(IdTipoServicio),
-    FOREIGN KEY (IdEmpleado) REFERENCES EMPLEADOS(IdEmpleado)
+    FOREIGN KEY (IdEmpleado) REFERENCES EMPLEADOS(IdEmpleado),
+    FOREIGN KEY (IdServicio) REFERENCES SERVICIOS(IdServicio)
 );
 
--- ============================================================
--- 15. ALMACEN (PRODUCTOS)
--- ============================================================
+-- 14. ALMACEN (PRODUCTOS)
 CREATE TABLE ALMACEN (
     IdProducto INT PRIMARY KEY IDENTITY(1,1),
     Nombre VARCHAR(50) NOT NULL,
     Descripcion VARCHAR(150),
-    Precio DECIMAL(10,2)                  -- precio de compra / referencia
+    Precio DECIMAL(10,2)
 );
 
--- ============================================================
--- 16. INVENTARIO
--- ============================================================
+-- 15. INVENTARIO
 CREATE TABLE INVENTARIO (
     IdInventario INT PRIMARY KEY IDENTITY(1,1),
     IdProducto INT NOT NULL,
     Cantidad INT NOT NULL,
-    CostoUnitario DECIMAL(10,2),           -- costo de adquisición por unidad
+    CostoUnitario DECIMAL(10,2),
     FOREIGN KEY (IdProducto) REFERENCES ALMACEN(IdProducto)
 );
 
--- ============================================================
--- 17. PROVEEDORES
--- ============================================================
+-- 16. PROVEEDORES
 CREATE TABLE PROVEEDORES (
     IdProveedor INT PRIMARY KEY IDENTITY(1,1),
     Nombre VARCHAR(50) NOT NULL,
@@ -216,9 +173,7 @@ CREATE TABLE PROVEEDORES (
     Email VARCHAR(100)
 );
 
--- ============================================================
--- 18. PROVEEDORES_HAS_INVENTARIO
--- ============================================================
+-- 17. PROVEEDORES_HAS_INVENTARIO
 CREATE TABLE PROVEEDORES_HAS_INVENTARIO (
     IdProveedor INT NOT NULL,
     IdInventario INT NOT NULL,
@@ -227,13 +182,11 @@ CREATE TABLE PROVEEDORES_HAS_INVENTARIO (
     FOREIGN KEY (IdInventario) REFERENCES INVENTARIO(IdInventario)
 );
 
--- ============================================================
--- 19. AUDITORÍA
--- ============================================================
+-- 18. AUDITORÍA
 CREATE TABLE Auditoria (
     IdAuditoria INT PRIMARY KEY IDENTITY(1,1),
     TablaAfectada VARCHAR(50),
-    Operacion VARCHAR(10),                -- INSERT, UPDATE, DELETE
+    Operacion VARCHAR(10),
     IdRegistro INT,
     DatosAnteriores NVARCHAR(MAX),
     DatosNuevos NVARCHAR(MAX),

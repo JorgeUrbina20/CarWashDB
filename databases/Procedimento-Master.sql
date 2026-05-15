@@ -135,7 +135,8 @@ BEGIN
     SELECT v.IdVehiculo, v.Placa, v.Tipo,
            mo.NombreModelo AS Modelo,
            ma.NombreMarca AS Marca,
-           c.Nombre + ' ' + c.Apellido_Paterno AS Cliente
+           c.Nombre + ' ' + c.Apellido_Paterno AS Cliente,
+           c.IdCliente
     FROM VEHICULOS v
     INNER JOIN MODELOS mo ON v.IdModelo = mo.IdModelo
     INNER JOIN MARCAS ma ON mo.IdMarca = ma.IdMarca
@@ -185,7 +186,7 @@ GO
 
 CREATE OR ALTER PROC sp_CambiarEstadoOrden
     @IdOrden INT,
-    @NuevoEstado VARCHAR(20)  -- pendiente, lavando, terminado, entregado
+    @NuevoEstado VARCHAR(20)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -240,31 +241,26 @@ END
 GO
 
 -- ============================================================
--- SERVICIOS (facturación)
+-- ASEGURAR LA COLUMNA IdServicio EN ORDENES
 -- ============================================================
--- Primero agregar la columna si no existe
 IF COL_LENGTH('ORDENES', 'IdServicio') IS NULL
 BEGIN
-    ALTER TABLE ORDENES
-    ADD IdServicio INT NULL;
+    ALTER TABLE ORDENES ADD IdServicio INT NULL;
 END
 GO
 
--- Agregar FK opcionalmente
-IF NOT EXISTS (
-    SELECT 1
-    FROM sys.foreign_keys
-    WHERE name = 'FK_Ordenes_Servicios'
-)
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_Ordenes_Servicios')
+    AND COL_LENGTH('ORDENES', 'IdServicio') IS NOT NULL
 BEGIN
     ALTER TABLE ORDENES
     ADD CONSTRAINT FK_Ordenes_Servicios
-    FOREIGN KEY (IdServicio)
-    REFERENCES SERVICIOS(IdServicio);
+    FOREIGN KEY (IdServicio) REFERENCES SERVICIOS(IdServicio);
 END
 GO
 
-
+-- ============================================================
+-- SERVICIOS (facturación)
+-- ============================================================
 CREATE OR ALTER PROC sp_CrearServicioDesdeOrden
     @IdOrden INT,
     @Costo DECIMAL(10,2),
@@ -273,88 +269,43 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE 
-        @IdCliente INT,
-        @IdVehiculo INT,
-        @IdTipoServicio INT,
-        @IdServicio INT;
+    DECLARE @IdCliente INT, @IdVehiculo INT, @IdTipoServicio INT, @IdServicio INT;
 
-    -- Obtener datos de la orden
-    SELECT 
-        @IdCliente = IdCliente,
-        @IdVehiculo = IdVehiculo,
-        @IdTipoServicio = IdTipoServicio
+    SELECT @IdCliente = IdCliente,
+           @IdVehiculo = IdVehiculo,
+           @IdTipoServicio = IdTipoServicio
     FROM ORDENES
     WHERE IdOrden = @IdOrden;
 
-    -- Validar existencia
     IF @IdCliente IS NULL
     BEGIN
-        RAISERROR('Orden no encontrada.',16,1);
+        RAISERROR('Orden no encontrada.', 16, 1);
         RETURN;
     END
 
     BEGIN TRY
-
         BEGIN TRANSACTION;
 
-        -- Crear servicio
-        INSERT INTO SERVICIOS
-        (
-            IdCliente,
-            IdVehiculo,
-            IdTipoServicio,
-            Costo
-        )
-        VALUES
-        (
-            @IdCliente,
-            @IdVehiculo,
-            @IdTipoServicio,
-            @Costo
-        );
+        INSERT INTO SERVICIOS (IdCliente, IdVehiculo, IdTipoServicio, Costo)
+        VALUES (@IdCliente, @IdVehiculo, @IdTipoServicio, @Costo);
 
-        -- Obtener identity generado
         SET @IdServicio = SCOPE_IDENTITY();
 
-        -- Registrar pago
-        INSERT INTO CAJA
-        (
-            IdServicio,
-            Precio,
-            Tipo_Pago
-        )
-        VALUES
-        (
-            @IdServicio,
-            @Costo,
-            @TipoPago
-        );
+        INSERT INTO CAJA (IdServicio, Precio, Tipo_Pago)
+        VALUES (@IdServicio, @Costo, @TipoPago);
 
-        -- Actualizar orden
         UPDATE ORDENES
-        SET 
-            IdServicio = @IdServicio,
+        SET IdServicio = @IdServicio,
             Estado = 'entregado'
         WHERE IdOrden = @IdOrden;
 
         COMMIT;
-
-        -- Retornar ID creado
         SELECT @IdServicio AS IdServicio;
-
     END TRY
     BEGIN CATCH
-
-        IF @@TRANCOUNT > 0
-            ROLLBACK;
-
-        DECLARE @ErrMsg NVARCHAR(4000);
-
-        SET @ErrMsg = ERROR_MESSAGE();
-
-        RAISERROR(@ErrMsg,16,1);
-
+        IF @@TRANCOUNT > 0 ROLLBACK;
+        DECLARE @ErrMsg NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrMsg, 16, 1);
     END CATCH
 END
 GO

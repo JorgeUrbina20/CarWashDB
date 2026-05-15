@@ -14,24 +14,12 @@ select * from ORDENES;
 select * from PROVEEDORES;
 select * from PROVEEDORES_HAS_INVENTARIO;
 select * from ROLES;
-select * from SERVICIO_DELIVERY;
 select * from SERVICIOS;
 select * from TIPOS_SERVICIO;
 select * from USUARIOS;
 select * from VEHICULOS;
 
---Consultas de vistas
+-- Vistas
 select * from Vista_Caja_Diaria;
 select * from Vista_Servicios_Hoy;
 select * from Vista_Vehiculos_Por_Cliente;
-
-
-
-
-
-
-
-
-
-
-

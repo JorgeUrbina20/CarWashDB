@@ -13,7 +13,7 @@ Cada 30 minutos → Backup de LOG
 -- BACKUP FULL DIARIO DE CarWashDB
 -- ==========================================
 BACKUP DATABASE CarWashDB 
-TO DISK = 'C:\Backups\CarWashDB\FULL\CarWashDB_FULL.bak'
+TO DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\Backup\CarwashDB_Full.bak'
 WITH INIT, CHECKSUM;
 
 PRINT 'Backup FULL completado.';
@@ -23,7 +23,7 @@ PRINT 'Backup FULL completado.';
 -- BACKUP DIFERENCIAL DE CarWashDB
 -- ==========================================
 BACKUP DATABASE CarWashDB 
-TO DISK = 'C:\Backups\CarWashDB\DIFF\CarWashDB_DIFF.bak'
+TO DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\Backup\CarWashDB_DIFF.bak'
 WITH DIFFERENTIAL, INIT, CHECKSUM;
 
 PRINT 'Backup DIFERENCIAL completado.';
