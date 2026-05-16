@@ -31,6 +31,7 @@
     <Folder Include="CarWashApp\Models\" />
     <Folder Include="CarWashApp\Data\" />
     <Folder Include="CarWashApp\Business\" />
+    <Folder Include="CarWashApp\Resources\" />
     <Folder Include="Packages\" />
   </ItemGroup>
 

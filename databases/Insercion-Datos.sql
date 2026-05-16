@@ -35,6 +35,9 @@ INSERT INTO USUARIOS (NombreUsuario, Contrasena, IdRol, IdEmpleado) VALUES
 ('ana.s', 'temporal', 3, 5),
 ('luis.f', 'temporal', 3, 6);
 
+UPDATE USUARIOS SET Contrasena = 'temporal' WHERE NombreUsuario = 'admin';
+select * from USUARIOS;
+
 -- ============================================================
 -- 4. SUCURSALES (CARWASH)
 -- ============================================================

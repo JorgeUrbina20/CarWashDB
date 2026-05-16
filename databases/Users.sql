@@ -1,3 +1,4 @@
+
 -- ============================================================
 -- SCRIPT DE SEGURIDAD: Logins, Usuarios, Roles y Permisos
 -- Base de datos: CarWashDB

@@ -157,3 +157,7 @@ C:\Users\Dell\Desktop\CarWashDB\UIC#\CarWashApp\CarWashApp\obj\Debug\net10.0-win
 C:\Users\Dell\Desktop\CarWashDB\UIC#\CarWashApp\CarWashApp\obj\Debug\net10.0-windows\CarWashApp.pdb
 C:\Users\Dell\Desktop\CarWashDB\UIC#\CarWashApp\CarWashApp\obj\Debug\net10.0-windows\CarWashApp.genruntimeconfig.cache
 C:\Users\Dell\Desktop\CarWashDB\UIC#\CarWashApp\CarWashApp\obj\Debug\net10.0-windows\ref\CarWashApp.dll
+C:\Users\Dell\Desktop\CarWashDB\UIC#\CarWashApp\CarWashApp\obj\Debug\net10.0-windows\CarWashApp.EmpleadoForm.resources
+C:\Users\Dell\Desktop\CarWashDB\UIC#\CarWashApp\CarWashApp\obj\Debug\net10.0-windows\CarWashApp.LoginForm.resources
+C:\Users\Dell\Desktop\CarWashDB\UIC#\CarWashApp\CarWashApp\obj\Debug\net10.0-windows\CarWashApp.OwnerForm.resources
+C:\Users\Dell\Desktop\CarWashDB\UIC#\CarWashApp\CarWashApp\obj\Debug\net10.0-windows\CarWashApp.RecepcionistaForm.resources

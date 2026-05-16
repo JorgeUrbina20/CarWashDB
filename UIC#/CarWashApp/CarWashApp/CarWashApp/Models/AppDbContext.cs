@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;  // ← Nuevo
 
 namespace CarWashApp.Models;
 
@@ -16,50 +17,36 @@ public partial class AppDbContext : DbContext
     }
 
     public virtual DbSet<Almacen> Almacens { get; set; }
-
     public virtual DbSet<Auditorium> Auditoria { get; set; }
-
     public virtual DbSet<Caja> Cajas { get; set; }
-
     public virtual DbSet<Carwash> Carwashes { get; set; }
-
     public virtual DbSet<Cliente> Clientes { get; set; }
-
     public virtual DbSet<Empleado> Empleados { get; set; }
-
     public virtual DbSet<Inventario> Inventarios { get; set; }
-
     public virtual DbSet<Marca> Marcas { get; set; }
-
     public virtual DbSet<Modelo> Modelos { get; set; }
-
     public virtual DbSet<Ordene> Ordenes { get; set; }
-
     public virtual DbSet<Proveedore> Proveedores { get; set; }
-
     public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<Servicio> Servicios { get; set; }
-
     public virtual DbSet<TiposServicio> TiposServicios { get; set; }
-
     public virtual DbSet<Usuario> Usuarios { get; set; }
-
     public virtual DbSet<Vehiculo> Vehiculos { get; set; }
-
     public virtual DbSet<VistaCajaDiarium> VistaCajaDiaria { get; set; }
-
     public virtual DbSet<VistaInventarioActual> VistaInventarioActuals { get; set; }
-
     public virtual DbSet<VistaOrdenesPendiente> VistaOrdenesPendientes { get; set; }
-
     public virtual DbSet<VistaServiciosHoy> VistaServiciosHoys { get; set; }
-
     public virtual DbSet<VistaVehiculosPorCliente> VistaVehiculosPorClientes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=.;Database=CarWashDB;Trusted_Connection=True;TrustServerCertificate=True;");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Lee la cadena de conexión desde App.config
+            string connString = ConfigurationManager.ConnectionStrings["CarWashDB"].ConnectionString;
+            optionsBuilder.UseSqlServer(connString);
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
