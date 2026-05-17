@@ -1,2 +1,16 @@
+# Carpetas de compilación (binarios, temporales)
+bin/
+obj/
+
+# Archivos de usuario de Visual Studio
 .vs/
-**/.vs/
+*.user
+*.suo
+
+# Paquetes NuGet
+packages/
+
+# Perfiles de publicación (no se versionan)
+Properties/PublishProfiles/
+*.pubxml
+*.pubxml.user

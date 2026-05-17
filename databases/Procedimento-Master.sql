@@ -445,3 +445,19 @@ BEGIN
     WHERE IdProveedor = @IdProveedor;
 END
 GO
+
+------------------------------------------------------------------
+-------------------------Empleado Procedure-----------------------
+------------------------------------------------------------------
+USE CarWashDB;
+GO
+
+CREATE OR ALTER PROC sp_LeerEmpleados AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT IdEmpleado, Nombre, Apellido_Paterno, Apellido_Materno, Direccion, Telefono, Sueldo, Turno, Cargo, FechaIngreso, Activo
+    FROM EMPLEADOS
+    WHERE Activo = 1
+    ORDER BY Apellido_Paterno, Apellido_Materno;
+END
+GO

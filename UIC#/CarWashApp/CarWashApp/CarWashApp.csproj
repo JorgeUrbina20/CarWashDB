@@ -29,10 +29,14 @@
 
   <ItemGroup>
     <Folder Include="CarWashApp\Models\" />
-    <Folder Include="CarWashApp\Data\" />
-    <Folder Include="CarWashApp\Business\" />
     <Folder Include="CarWashApp\Resources\" />
     <Folder Include="Packages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

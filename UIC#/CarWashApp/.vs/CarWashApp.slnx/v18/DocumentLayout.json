@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|c:\\users\\dell\\desktop\\carwashdb\\uic#\\carwashapp\\carwashapp\\carwashapp\\forms\\ownerform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|solutionrelative:carwashapp\\carwashapp\\forms\\ownerform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|c:\\users\\dell\\desktop\\carwashdb\\uic#\\carwashapp\\carwashapp\\carwashapp\\forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|solutionrelative:carwashapp\\carwashapp\\forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|c:\\users\\dell\\desktop\\carwashdb\\uic#\\carwashapp\\carwashapp\\carwashapp\\forms\\recepcionistaform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|solutionrelative:carwashapp\\carwashapp\\forms\\recepcionistaform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\carwashapp\\carwashapp\\forms\\ownerform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|solutionrelative:carwashapp\\carwashapp\\forms\\ownerform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\carwashapp\\carwashapp\\forms\\recepcionistaform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|solutionrelative:carwashapp\\carwashapp\\forms\\recepcionistaform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\carwashapp\\carwashapp\\forms\\empleadoform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{F80D1CE7-0CB6-8A8C-5D81-D1418A932CF4}|CarWashApp\\CarWashApp.csproj|solutionrelative:carwashapp\\carwashapp\\forms\\empleadoform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,32 +26,54 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "OwnerForm.cs",
-              "DocumentMoniker": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\OwnerForm.cs",
-              "RelativeDocumentMoniker": "CarWashApp\\CarWashApp\\Forms\\OwnerForm.cs",
-              "ToolTip": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\OwnerForm.cs",
-              "RelativeToolTip": "CarWashApp\\CarWashApp\\Forms\\OwnerForm.cs",
-              "ViewState": "AgIAAJQAAAAAAAAAAAAqwKEAAAAtAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "RecepcionistaForm.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\RecepcionistaForm.cs",
+              "RelativeDocumentMoniker": "CarWashApp\\CarWashApp\\Forms\\RecepcionistaForm.cs",
+              "ToolTip": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\RecepcionistaForm.cs [Dise\u00F1o]",
+              "RelativeToolTip": "CarWashApp\\CarWashApp\\Forms\\RecepcionistaForm.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T13:59:27.903Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-17T01:02:46.627Z",
+              "EditorCaption": " [Dise\u00F1o]"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "RecepcionistaForm.cs",
-              "DocumentMoniker": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\RecepcionistaForm.cs",
-              "RelativeDocumentMoniker": "CarWashApp\\CarWashApp\\Forms\\RecepcionistaForm.cs",
-              "ToolTip": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\RecepcionistaForm.cs",
-              "RelativeToolTip": "CarWashApp\\CarWashApp\\Forms\\RecepcionistaForm.cs",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAqwHwAAAABAAAAAAAAAA==",
+              "Title": "OwnerForm.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\OwnerForm.cs",
+              "RelativeDocumentMoniker": "CarWashApp\\CarWashApp\\Forms\\OwnerForm.cs",
+              "ToolTip": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\OwnerForm.cs [Dise\u00F1o]",
+              "RelativeToolTip": "CarWashApp\\CarWashApp\\Forms\\OwnerForm.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T13:35:16.746Z"
+              "WhenOpened": "2026-05-17T01:02:31.589Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LoginForm.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\LoginForm.cs",
+              "RelativeDocumentMoniker": "CarWashApp\\CarWashApp\\Forms\\LoginForm.cs",
+              "ToolTip": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\LoginForm.cs [Dise\u00F1o]",
+              "RelativeToolTip": "CarWashApp\\CarWashApp\\Forms\\LoginForm.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T01:01:37.124Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "EmpleadoForm.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\EmpleadoForm.cs",
+              "RelativeDocumentMoniker": "CarWashApp\\CarWashApp\\Forms\\EmpleadoForm.cs",
+              "ToolTip": "C:\\Users\\Dell\\Desktop\\CarWashDB\\UIC#\\CarWashApp\\CarWashApp\\CarWashApp\\Forms\\EmpleadoForm.cs [Dise\u00F1o]",
+              "RelativeToolTip": "CarWashApp\\CarWashApp\\Forms\\EmpleadoForm.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T01:01:09.709Z"
             }
           ]
         }

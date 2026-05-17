@@ -28,15 +28,16 @@ INSERT INTO EMPLEADOS (Nombre, Apellido_Paterno, Apellido_Materno, Direccion, Te
 -- Se usa el hash de ejemplo SOLO para que el login funcione con 'Admin123!'.
 -- Los demás usuarios usarán 'temporal' y deberán cambiarse en el primer inicio.
 INSERT INTO USUARIOS (NombreUsuario, Contrasena, IdRol, IdEmpleado) VALUES
-('admin', '$2a$12$LJ3m4yG5Z6v6Qe9F8v0wFeK1bG3c0hJpXnR0oT7uWsUfYzBvI8m2W', 1, 1), -- hash de 'Admin123!'
+('admin', 'temporal', 1, 1), 
 ('laura.r', 'temporal', 2, 2),
 ('jose.m', 'temporal', 2, 3),
 ('miguel.g', 'temporal', 3, 4),
 ('ana.s', 'temporal', 3, 5),
 ('luis.f', 'temporal', 3, 6);
 
-UPDATE USUARIOS SET Contrasena = 'temporal' WHERE NombreUsuario = 'admin';
 select * from USUARIOS;
+
+select * from EMPLEADOS
 
 -- ============================================================
 -- 4. SUCURSALES (CARWASH)

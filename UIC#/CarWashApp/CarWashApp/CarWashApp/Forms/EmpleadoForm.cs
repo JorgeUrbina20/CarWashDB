@@ -1,5 +1,9 @@
-﻿using System;
+﻿using CarWashApp.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace CarWashApp
@@ -11,11 +15,14 @@ namespace CarWashApp
         private Button btnMisTrabajos;
         private Button btnSalir;
         private Label lblTitulo;
+        private int _idEmpleado;
 
-        public EmpleadoForm(string nombreEmpleado)
+        public EmpleadoForm(string nombreEmpleado, int idEmpleado)
         {
+            _idEmpleado = idEmpleado;
             ConfigurarVentana(nombreEmpleado);
             InicializarComponentes();
+            CargarMisTrabajos();
         }
 
         private void ConfigurarVentana(string nombreEmpleado)
@@ -75,22 +82,7 @@ namespace CarWashApp
             };
             panelContenido.Controls.Add(lblTitulo);
 
-            // Botón para actualizar trabajos
-            Button btnActualizar = new Button()
-            {
-                Text = "Actualizar Lista",
-                Location = new Point(30, 100),
-                Size = new Size(200, 45),
-                BackColor = Color.FromArgb(200, 60, 60),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold)
-            };
-            btnActualizar.FlatAppearance.BorderSize = 0;
-            btnActualizar.Click += (s, e) => MessageBox.Show("Cargar órdenes del empleado...");
-            panelContenido.Controls.Add(btnActualizar);
-
-            btnMisTrabajos.Click += (s, e) => MostrarContenido("Mis Trabajos Asignados");
+            btnMisTrabajos.Click += (s, e) => CargarMisTrabajos();
         }
 
         private Button CrearBotonMenu(string texto, int posicion)
@@ -111,11 +103,93 @@ namespace CarWashApp
             return btn;
         }
 
-        private void MostrarContenido(string texto)
+        private void CargarMisTrabajos()
         {
             panelContenido.Controls.Clear();
             panelContenido.Controls.Add(lblTitulo);
-            lblTitulo.Text = texto;
+            lblTitulo.Text = "Mis Trabajos Asignados";
+
+            DataGridView dgv = new DataGridView()
+            {
+                Location = new Point(30, 80),
+                Size = new Size(800, 450),
+                ReadOnly = true,
+                AllowUserToAddRows = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            };
+
+            using (var db = new AppDbContext())
+            {
+                var trabajos = db.Ordenes
+                    .Where(o => o.IdEmpleado == _idEmpleado && (o.Estado == "pendiente" || o.Estado == "lavando"))
+                    .Select(o => new
+                    {
+                        o.IdOrden,
+                        Cliente = o.IdClienteNavigation.Nombre + " " + o.IdClienteNavigation.ApellidoPaterno,
+                        Placa = o.IdVehiculoNavigation.Placa,
+                        Servicio = o.IdTipoServicioNavigation.Nombre,
+                        o.Estado,
+                        o.InstruccionesEspeciales
+                    }).ToList();
+
+                dgv.DataSource = trabajos;
+            }
+
+            Button btnIniciar = new Button()
+            {
+                Text = "Iniciar Lavado",
+                Location = new Point(30, 550),
+                Size = new Size(150, 35),
+                BackColor = Color.FromArgb(230, 126, 34),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnIniciar.FlatAppearance.BorderSize = 0;
+            btnIniciar.Click += (s, e) => CambiarEstadoOrden("lavando", dgv);
+
+            Button btnTerminar = new Button()
+            {
+                Text = "Marcar Terminado",
+                Location = new Point(200, 550),
+                Size = new Size(150, 35),
+                BackColor = Color.FromArgb(46, 204, 113),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnTerminar.FlatAppearance.BorderSize = 0;
+            btnTerminar.Click += (s, e) => CambiarEstadoOrden("terminado", dgv);
+
+            panelContenido.Controls.Add(dgv);
+            panelContenido.Controls.Add(btnIniciar);
+            panelContenido.Controls.Add(btnTerminar);
+        }
+
+        private void InitializeComponent()
+        {
+
+        }
+
+        private void CambiarEstadoOrden(string nuevoEstado, DataGridView dgv)
+        {
+            if (dgv.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Seleccione una orden.");
+                return;
+            }
+            int idOrden = (int)dgv.SelectedRows[0].Cells[0].Value;
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    db.Database.ExecuteSqlRaw("EXEC sp_CambiarEstadoOrden @IdOrden={0}, @NuevoEstado={1}", idOrden, nuevoEstado);
+                }
+                CargarMisTrabajos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
     }
 }
